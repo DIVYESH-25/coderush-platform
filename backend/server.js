@@ -13,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serving Frontend Static Files
+// Serve frontend static files
 const frontendPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendPath));
 
@@ -36,7 +36,7 @@ const initGameState = async () => {
     }
 };
 
-// Database Connection (Mongoose v7+)
+// Mongoose v7+ connection (no extra options!)
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('Connected to MongoDB');
@@ -44,7 +44,7 @@ mongoose.connect(process.env.MONGO_URI)
     })
     .catch(err => console.error('MongoDB connection error:', err));
 
-// API Routes
+// API routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/questions', require('./routes/questions'));
 app.use('/api/round', require('./routes/round'));
@@ -55,6 +55,6 @@ app.use((req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// Start Server
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Production server running on port ${PORT}`));
