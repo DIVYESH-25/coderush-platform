@@ -42,7 +42,7 @@ app.use('/api/round', require('./routes/round'));
 app.use('/api/admin', require('./routes/admin'));
 
 // Catch-all to serve frontend index.html for SPA routing
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
