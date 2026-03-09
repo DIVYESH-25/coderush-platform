@@ -1,3 +1,5 @@
+// backend/server.js
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -15,25 +17,35 @@ app.use(express.json());
 const frontendPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendPath));
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log('Connected to MongoDB');
-        initGameState();
-    })
-    .catch(err => console.error('MongoDB connection error:', err));
-
 // Initialize GameState if it doesn't exist
 const initGameState = async () => {
     try {
         const state = await GameState.findOne({ id: 'global' });
         if (!state) {
-            await GameState.create({ id: 'global', currentRound: 0, isRoundActive: false });
+            await GameState.create({
+                id: 'global',
+                currentRound: 0,
+                isRoundActive: false
+            });
+            console.log('GameState initialized');
+        } else {
+            console.log('GameState already exists');
         }
     } catch (err) {
         console.error('Error initializing GameState:', err);
     }
 };
+
+// Database Connection
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
+    console.log('Connected to MongoDB');
+    initGameState();
+})
+.catch(err => console.error('MongoDB connection error:', err));
 
 // API Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -46,5 +58,6 @@ app.use((req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Production server running on port ${PORT}`));
