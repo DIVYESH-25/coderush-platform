@@ -8,12 +8,9 @@ api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   const adminToken = localStorage.getItem('adminToken');
 
-  // Use admin token for /admin routes
   if (config.url.includes('/admin') && adminToken) {
     config.headers.Authorization = `Bearer ${adminToken}`;
-  }
-  // Otherwise use regular token
-  else if (token) {
+  } else if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
