@@ -7,8 +7,7 @@ const api = axios.create({
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   const adminToken = localStorage.getItem('adminToken');
-  
-  // Prefer admin token for /admin routes, otherwise team token
+
   if (config.url.includes('/admin') && adminToken) {
     config.headers.Authorization = `Bearer ${adminToken}`;
   } else if (token) {
