@@ -33,8 +33,8 @@ router.post('/register', async (req, res) => {
 
         res.status(201).json({ message: 'Registration Successful - Welcome to CodeRush', teamId, token });
     } catch (error) {
-        console.error('Registration Error', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Registration Error:', error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
 });
 
