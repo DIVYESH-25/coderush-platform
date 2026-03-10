@@ -29,7 +29,8 @@ router.post('/register', async (req, res) => {
 
         const insertedTeam = await newTeam.save();
 
-        const token = jwt.sign({ teamId, _id: insertedTeam._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
+        const jwtSecret = process.env.JWT_SECRET || 'supersecretcoderushkey_fallback';
+        const token = jwt.sign({ teamId, _id: insertedTeam._id }, jwtSecret, { expiresIn: '12h' });
 
         res.status(201).json({ message: 'Registration Successful - Welcome to CodeRush', teamId, token });
     } catch (error) {
@@ -45,7 +46,7 @@ router.get('/me', async (req, res) => {
         if (!authHeader) return res.status(401).json({ error: 'No token provided' });
         
         const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretcoderushkey_fallback');
         
         const team = await Team.findById(decoded._id);
         if (!team) return res.status(404).json({ error: 'Team not found' });

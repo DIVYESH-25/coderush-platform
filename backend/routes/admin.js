@@ -10,7 +10,7 @@ const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'coderushadmin2026';
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
     if (username === ADMIN_USER && password === ADMIN_PASS) {
-        const token = jwt.sign({ role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '24h' });
+        const token = jwt.sign({ role: 'admin' }, process.env.JWT_SECRET || 'supersecretcoderushkey_fallback', { expiresIn: '24h' });
         res.json({ token });
     } else {
         res.status(401).json({ error: 'Invalid credentials' });
@@ -21,7 +21,7 @@ router.post('/login', (req, res) => {
 const verifyAdmin = (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretcoderushkey_fallback');
         if (decoded.role === 'admin') {
             next();
         } else {
