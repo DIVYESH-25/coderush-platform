@@ -36,13 +36,27 @@ const initGameState = async () => {
     }
 };
 
-// Mongoose v7+ connection (no extra options!)
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
+// Mongoose v7+ connection fallback to in-memory db
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 });
         console.log('Connected to MongoDB');
         initGameState();
-    })
-    .catch(err => console.error('MongoDB connection error:', err));
+    } catch (err) {
+        console.error('MongoDB connection error, falling back to In-Memory DB:', err.message);
+        try {
+            const { MongoMemoryServer } = require('mongodb-memory-server');
+            const mongoServer = await MongoMemoryServer.create();
+            const mongoUri = mongoServer.getUri();
+            await mongoose.connect(mongoUri);
+            console.log('Connected to fallback In-Memory MongoDB');
+            initGameState();
+        } catch (memErr) {
+            console.error('Failed to start In-Memory DB:', memErr);
+        }
+    }
+};
+connectDB();
 
 // API routes
 app.use('/api/auth', require('./routes/auth'));

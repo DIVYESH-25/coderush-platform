@@ -18,7 +18,7 @@ const AdminLogin = () => {
       localStorage.setItem('adminToken', res.data.token);
       navigate('/admin');
     } catch (err) {
-      setError('Invalid credentials');
+      setError(err.response?.data?.error || 'Cannot connect to server');
     }
   };
 
