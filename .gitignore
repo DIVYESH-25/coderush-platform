@@ -5,3 +5,9 @@ build/
 coverage/
 *.db
 .DS_Store
+
+# Temporary code evaluation folders
+tmp_eval_*
+
+# Java compiled files
+*.class
