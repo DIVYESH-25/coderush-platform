@@ -56,9 +56,7 @@ const Round1 = () => {
   const finishRound = async () => {
     setIsFinished(true);
     try {
-      const evalRes = await api.post('/questions/mcq/evaluate', { answers });
-      const score = evalRes.data.score;
-      await api.post('/round/submit-round', { round: 1, score });
+      await api.post('/round/submit-round', { round: 1, answers });
       navigate('/dashboard');
     } catch (e) {
       console.error(e);
@@ -87,7 +85,7 @@ const Round1 = () => {
   }, []);
 
   if (questions.length === 0) return <div>Loading questions...</div>;
-  if (isFinished) return <div style={{textAlign:'center', marginTop:'50px'}}>Submitting...</div>;
+  if (isFinished) return <div style={{ textAlign: 'center', marginTop: '50px' }}>Submitting...</div>;
 
   const currentQ = questions[currentIndex];
   const selectedObj = answers.find(a => a.id === currentQ.id);
@@ -102,7 +100,7 @@ const Round1 = () => {
       </div>
 
       <div style={{ background: 'rgba(255,255,255,0.1)', height: '5px', width: '100%', marginBottom: '20px' }}>
-         <div style={{ background: 'var(--cyan)', height: '100%', width: `${((currentIndex+1)/questions.length)*100}%`, transition: 'width 0.3s' }}></div>
+        <div style={{ background: 'var(--cyan)', height: '100%', width: `${((currentIndex + 1) / questions.length) * 100}%`, transition: 'width 0.3s' }}></div>
       </div>
 
       <div className="glass-panel">
@@ -110,9 +108,9 @@ const Round1 = () => {
           <span>Question {currentIndex + 1} of {questions.length}</span>
           <span>{currentQ.difficulty} | {currentQ.language}</span>
         </div>
-        
+
         <h3 style={{ marginBottom: '20px', fontSize: '1.2rem' }}>{currentQ.question}</h3>
-        
+
         <div style={{ background: '#1e1e1e', padding: '15px', borderRadius: '5px', marginBottom: '20px', fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>
           {currentQ.code}
         </div>
@@ -136,7 +134,7 @@ const Round1 = () => {
             </button>
           ))}
         </div>
-        
+
         <div style={{ marginTop: '20px', textAlign: 'right' }}>
           <button className="btn-primary" onClick={handleNext}>
             {currentIndex === questions.length - 1 ? 'Finish' : 'Next Question'}

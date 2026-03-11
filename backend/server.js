@@ -10,6 +10,7 @@ const cors = require('cors');
 const GameState = require('./models/GameState');
 
 const app = express();
+console.log("[SERVER] Starting CodeRush Backend...");
 
 // Middleware
 app.use(cors());
@@ -75,6 +76,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/questions', require('./routes/questions'));
 app.use('/api/round', require('./routes/round'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/leaderboard', require('./routes/leaderboard'));
 
 // 6️⃣ Catch-all: Serve frontend index.html for SPA routing
 app.use((req, res) => {
@@ -83,4 +85,14 @@ app.use((req, res) => {
 
 // 7️⃣ Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Production server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`🚀 Production server running on port ${PORT}`));
+
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error("[GLOBAL ERROR]", err);
+    res.status(500).json({ error: "Internal Server Error", details: err.message });
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});

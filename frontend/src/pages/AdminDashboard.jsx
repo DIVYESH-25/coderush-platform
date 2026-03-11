@@ -1,13 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+const TeamInfoModal = ({ team, onClose }) => {
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+      background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+    }}>
+      <div className="glass-panel" style={{ width: '90%', maxWidth: '500px', padding: '40px', position: 'relative' }}>
+        <button
+          onClick={onClose}
+          style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', color: 'var(--error)', fontSize: '1.5rem', cursor: 'pointer' }}
+        >
+          ×
+        </button>
+        <h2 className="neon-text" style={{ marginBottom: '20px' }}>Team Registration Details</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px', color: 'white', fontSize: '1rem' }}>
+          <p><strong>Team Name:</strong> {team.teamName}</p>
+          <p><strong>Team ID:</strong> {team.teamId}</p>
+          <hr style={{ border: '0.5px solid rgba(0, 243, 255, 0.2)' }} />
+          <p><strong>Member 1:</strong> {team.member1}</p>
+          <p><strong>Member 2:</strong> {team.member2 || 'N/A'}</p>
+          <p><strong>College:</strong> {team.college}</p>
+          <p><strong>Email:</strong> {team.email}</p>
+          <p><strong>Phone:</strong> {team.phone}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [teams, setTeams] = useState([]);
   const [gameState, setGameState] = useState({ currentRound: 0, isRoundActive: false });
-
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedTeamInfo, setSelectedTeamInfo] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -28,12 +55,12 @@ const AdminDashboard = () => {
         api.get('/admin/state')
       ]);
       // Verify teams is an array
-      if(Array.isArray(teamsRes.data)) setTeams(teamsRes.data);
-      if(stateRes.data) setGameState(stateRes.data);
+      if (Array.isArray(teamsRes.data)) setTeams(teamsRes.data);
+      if (stateRes.data) setGameState(stateRes.data);
     } catch (err) {
       if (err.response && err.response.status === 403) {
-         localStorage.removeItem('adminToken');
-         navigate('/admin/login');
+        localStorage.removeItem('adminToken');
+        navigate('/admin/login');
       }
     }
   };
@@ -59,12 +86,22 @@ const AdminDashboard = () => {
       <h2 className="neon-text" style={{ marginBottom: '30px' }}>Admin Dashboard</h2>
 
       <div className="glass-panel" style={{ marginBottom: '30px', display: 'flex', gap: '20px', alignItems: 'center' }}>
+        <h3 style={{ marginRight: '20px' }}>Evaluation Actions</h3>
+        <button className="btn-primary" onClick={() => navigate('/admin/eval-round2')}>
+          Evaluate Round 2
+        </button>
+        <button className="btn-primary" onClick={() => navigate('/admin/eval-round3')}>
+          Evaluate Round 3
+        </button>
+      </div>
+
+      <div className="glass-panel" style={{ marginBottom: '30px', display: 'flex', gap: '20px', alignItems: 'center' }}>
         <h3 style={{ marginRight: '20px' }}>Global Controls</h3>
-        
+
         <div style={{ padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
           <span>Current Round: <strong>{gameState.currentRound === 0 ? 'Lobby' : gameState.currentRound}</strong></span>
-          <select 
-            value={gameState.currentRound} 
+          <select
+            value={gameState.currentRound}
             onChange={(e) => updateState({ currentRound: parseInt(e.target.value), isRoundActive: gameState.isRoundActive })}
             style={{ marginLeft: '10px', background: 'var(--bg-panel)', color: 'white', padding: '5px' }}
           >
@@ -75,16 +112,16 @@ const AdminDashboard = () => {
           </select>
         </div>
 
-        <button 
-          className={gameState.isRoundActive ? "btn-neon" : "btn-primary"} 
+        <button
+          className={gameState.isRoundActive ? "btn-neon" : "btn-primary"}
           onClick={() => updateState({ currentRound: gameState.currentRound, isRoundActive: !gameState.isRoundActive })}
         >
           {gameState.isRoundActive ? 'STOP ROUND' : 'START ROUND'}
         </button>
 
-        <button 
-          className="btn-neon" 
-          onClick={handleReset} 
+        <button
+          className="btn-neon"
+          onClick={handleReset}
           style={{ marginLeft: 'auto', color: 'var(--error)', borderColor: 'var(--error)' }}
         >
           RESET EVENT
@@ -93,7 +130,7 @@ const AdminDashboard = () => {
 
       <div className="glass-panel">
         <h3 className="neon-text" style={{ marginBottom: '20px' }}>Live Leaderboard</h3>
-        
+
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
@@ -101,10 +138,10 @@ const AdminDashboard = () => {
                 <th style={{ padding: '12px' }}>Rank</th>
                 <th style={{ padding: '12px' }}>Team Name</th>
                 <th style={{ padding: '12px' }}>ID</th>
-                <th style={{ padding: '12px' }}>R1</th>
-                <th style={{ padding: '12px' }}>R2</th>
-                <th style={{ padding: '12px' }}>R3</th>
-                <th style={{ padding: '12px' }}>Total</th>
+                <th style={{ padding: '12px' }}>Round 1 Score</th>
+                <th style={{ padding: '12px' }}>Round 2 Score</th>
+                <th style={{ padding: '12px' }}>Round 3 Score</th>
+                <th style={{ padding: '12px' }}>Final Score</th>
                 <th style={{ padding: '12px' }}>Actions</th>
               </tr>
             </thead>
@@ -119,12 +156,12 @@ const AdminDashboard = () => {
                   <td style={{ padding: '12px' }}>{team.round3Completed ? team.round3Score : '-'}</td>
                   <td style={{ padding: '12px', color: 'var(--success)', fontWeight: 'bold' }}>{team.finalScore}</td>
                   <td style={{ padding: '12px' }}>
-                    <button 
-                      className="btn-neon" 
+                    <button
+                      className="btn-neon"
                       style={{ padding: '4px 8px', fontSize: '0.7rem' }}
-                      onClick={() => setSelectedTeam(team)}
+                      onClick={() => setSelectedTeamInfo(team)}
                     >
-                      DETAILS
+                      TEAM INFO
                     </button>
                   </td>
                 </tr>
@@ -141,36 +178,8 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Team Details Modal */}
-      {selectedTeam && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-        }}>
-          <div className="glass-panel" style={{ width: '90%', maxWidth: '500px', padding: '40px', position: 'relative' }}>
-            <button 
-              onClick={() => setSelectedTeam(null)}
-              style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', color: 'var(--error)', fontSize: '1.5rem', cursor: 'pointer' }}
-            >
-              ×
-            </button>
-            <h2 className="neon-text" style={{ marginBottom: '20px' }}>Team Details</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px', color: 'white' }}>
-              <p><strong>Team Name:</strong> {selectedTeam.teamName}</p>
-              <p><strong>Team ID:</strong> {selectedTeam.teamId}</p>
-              <p><strong>Member 1:</strong> {selectedTeam.member1}</p>
-              <p><strong>Member 2:</strong> {selectedTeam.member2}</p>
-              <p><strong>College:</strong> {selectedTeam.college}</p>
-              <p><strong>Email:</strong> {selectedTeam.email}</p>
-              <p><strong>Phone:</strong> {selectedTeam.phone}</p>
-              <hr style={{ border: '0.5px solid rgba(0, 243, 255, 0.2)', margin: '10px 0' }} />
-              <p><strong>Round 1:</strong> {selectedTeam.round1Score} pts {selectedTeam.round1Completed ? '✅' : '🕑'}</p>
-              <p><strong>Round 2:</strong> {selectedTeam.round2Score} pts {selectedTeam.round2Completed ? '✅' : '🕑'}</p>
-              <p><strong>Round 3:</strong> {selectedTeam.round3Score} pts {selectedTeam.round3Completed ? '✅' : '🕑'}</p>
-              <p style={{ fontSize: '1.2rem', color: 'var(--success)' }}><strong>Total Score:</strong> {selectedTeam.finalScore}</p>
-            </div>
-          </div>
-        </div>
+      {selectedTeamInfo && (
+        <TeamInfoModal team={selectedTeamInfo} onClose={() => setSelectedTeamInfo(null)} />
       )}
     </div>
   );

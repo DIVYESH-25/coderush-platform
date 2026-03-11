@@ -11,6 +11,8 @@ import Round2 from './pages/Round2';
 import Round3 from './pages/Round3';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminRound2Evaluation from './pages/AdminRound2Evaluation';
+import AdminRound3Evaluation from './pages/AdminRound3Evaluation';
 import Navigation from './components/Navigation';
 
 import './index.css';
@@ -30,6 +32,8 @@ function App() {
             <Route path="/round/3" element={<Round3 />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/eval-round2" element={<AdminRound2Evaluation />} />
+            <Route path="/admin/eval-round3" element={<AdminRound3Evaluation />} />
           </Routes>
         </main>
       </div>

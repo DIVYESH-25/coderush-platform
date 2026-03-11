@@ -35,27 +35,4 @@ router.get('/mcq', verifyToken, (req, res) => {
     }
 });
 
-router.post('/mcq/evaluate', verifyToken, (req, res) => {
-    try {
-        const { answers } = req.body; // array of { id, selected }
-        const questionsPath = path.join(__dirname, '../../mcq_questions.json');
-        const data = fs.readFileSync(questionsPath, 'utf-8');
-        const questions = JSON.parse(data);
-
-        let score = 0;
-        answers.forEach(ans => {
-            const q = questions.find(question => question.id === ans.id);
-            if (q && q.answer === ans.selected) {
-                if (q.difficulty === 'Easy') score += 5;
-                if (q.difficulty === 'Medium') score += 10;
-                if (q.difficulty === 'Hard') score += 15;
-            }
-        });
-
-        res.json({ score });
-    } catch (error) {
-        res.status(500).json({ error: 'Evaluation failed' });
-    }
-});
-
 module.exports = router;

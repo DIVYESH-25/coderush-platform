@@ -1,0 +1,33 @@
+{
+  "message": "Round 1 submitted successfully",
+  "team": {
+    "_id": "69b041362b2763ff41b01fdd",
+    "teamId": "CR-123",
+    "teamName": "TestingTeam-1773158710601",
+    "member1": "Mock Tester",
+    "college": "Virtual College",
+    "email": "test1773158710601@mock.com",
+    "phone": "1234567890",
+    "round1Score": 6,
+    "round1Correct": 2,
+    "round2Solutions": [],
+    "round2Score": 0,
+    "round2_q1_score": 0,
+    "round2_q2_score": 0,
+    "round2_q3_score": 0,
+    "round2_q4_score": 0,
+    "round2_q5_score": 0,
+    "round2_q6_score": 0,
+    "round3Score": 0,
+    "round3_problem1_score": 0,
+    "round3_problem2_score": 0,
+    "round3_problem1_code": "",
+    "round3_problem2_code": "",
+    "finalScore": 6,
+    "round1Completed": true,
+    "round2Completed": false,
+    "round3Completed": false,
+    "createdAt": "2026-03-10T16:05:10.840Z",
+    "__v": 0
+  }
+}
